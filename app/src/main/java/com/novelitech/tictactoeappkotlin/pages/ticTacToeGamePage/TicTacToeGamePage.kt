@@ -6,21 +6,72 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.novelitech.tictactoeappkotlin.models.Player
 import com.novelitech.tictactoeappkotlin.models.Position
 import com.novelitech.tictactoeappkotlin.pages.ticTacToeGamePage.widgets.board.Board
 import com.novelitech.tictactoeappkotlin.pages.ticTacToeGamePage.widgets.display.Display
 
+/**
+ * I had some issues with the update of the board using the mutableState in a collection.
+ * https://blog.zachklipp.com/two-mutables-dont-make-a-right/
+ * https://tigeroakes.com/posts/mutablestateof-list-vs-mutablestatelistof/
+ * The links above explain why it happens
+ */
+
 @Composable
 fun TicTacToeGamePage(modifier: Modifier = Modifier) {
+
+//    var board by remember {
+//        mutableStateOf<List<List<Player?>>>(
+//            listOf(
+//                listOf<Player?>(null,null,null),
+//                listOf<Player?>(null,null,null),
+//                listOf<Player?>(null,null,null),
+//            )
+//        )
+//    }
+
+    val board = remember {
+        mutableStateListOf(
+            mutableStateListOf<Player?>(null,null,null),
+            mutableStateListOf<Player?>(null,null,null),
+            mutableStateListOf<Player?>(null,null,null),
+        )
+    }
+
+    var currentPlayer by remember {
+        mutableStateOf<Player>(Player.X)
+    }
+
+    val currentScore = remember {
+        mutableStateMapOf(
+            Player.X to 0,
+            Player.O to 0,
+        )
+    }
+
+    fun changeCurrentPlayer() {
+        currentPlayer = if(currentPlayer == Player.X) Player.O else Player.X
+    }
+
     Scaffold(
         modifier = modifier
     ) { innerPadding ->
         Column(
             modifier = Modifier.padding(innerPadding)
         ) {
-            Display()
+            Display(
+                currentPlayer = currentPlayer,
+                currentScore = currentScore,
+            )
             
             Spacer(modifier = Modifier.size(24.dp))
             
@@ -28,10 +79,21 @@ fun TicTacToeGamePage(modifier: Modifier = Modifier) {
                 modifier = Modifier
                     .weight(1f)
                     .padding(16.dp),
+                boardProgress = board,
                 onTap = { position: Position ->
-                    println("Clicked position: x: ${position.x} | y: ${position.y}")
+
+                    if(board[position.x][position.y] == null) {
+                        board[position.x][position.y] = currentPlayer
+
+                        changeCurrentPlayer()
+
+                        println("Clicked position: x: ${position.x} | y: ${position.y}")
+                        println("Current board: $board")
+                    }
                 }
             )
         }
     }
+
+
 }
