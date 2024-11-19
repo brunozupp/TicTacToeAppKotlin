@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -13,8 +12,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarColors
+import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -44,7 +42,6 @@ import kotlinx.coroutines.launch
  * The links above explain why it happens
  */
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TicTacToeGamePage(modifier: Modifier = Modifier) {
 
@@ -67,6 +64,10 @@ fun TicTacToeGamePage(modifier: Modifier = Modifier) {
         )
     }
 
+    val positionsWinner = remember {
+        mutableStateListOf<Position>()
+    }
+
     fun changeCurrentPlayer() {
         currentPlayer = if(currentPlayer == Player.X) Player.O else Player.X
     }
@@ -77,6 +78,8 @@ fun TicTacToeGamePage(modifier: Modifier = Modifier) {
                 board[i][j] = null
             }
         }
+
+        positionsWinner.clear()
     }
 
     // Control the snackBar
@@ -89,14 +92,6 @@ fun TicTacToeGamePage(modifier: Modifier = Modifier) {
             SnackbarHost(hostState = snackbarHostState)
         },
         topBar = {
-//            TopAppBar(
-//                modifier = Modifier.background(Color.Blue),
-//                title = {
-//                    Text(
-//                        text = "Tic Tac Toe",
-//                    )
-//                },
-//            )
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -135,13 +130,18 @@ fun TicTacToeGamePage(modifier: Modifier = Modifier) {
                     .weight(1f)
                     .padding(16.dp),
                 boardProgress = board,
+                positionsWinner = positionsWinner,
                 onTap = { position: Position ->
 
                     if(board[position.x][position.y] == null) {
                         board[position.x][position.y] = currentPlayer
 
-                        if(GameValidation.isWinner(board, currentPlayer)) {
+                        val verifyPositionsWinner = GameValidation.getPositionsWinner(board, currentPlayer)
+
+                        if(verifyPositionsWinner != null) {
                             currentScore[currentPlayer] = currentScore[currentPlayer]!! + 1
+
+                            positionsWinner.addAll(verifyPositionsWinner)
 
                             scope.launch {
                                 snackbarHostState.showSnackbar(
