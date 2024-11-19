@@ -8,6 +8,7 @@ import androidx.compose.ui.graphics.Color
 import com.novelitech.tictactoeappkotlin.models.Player
 import com.novelitech.tictactoeappkotlin.models.Position
 import com.novelitech.tictactoeappkotlin.ui.components.BoxSymbol
+import com.novelitech.tictactoeappkotlin.ui.theme.ContainerColor
 
 @Composable
 fun Board(
@@ -33,7 +34,7 @@ fun Board(
             return Color.Green
         }
 
-        return Color.White
+        return ContainerColor
     }
 
     Column(

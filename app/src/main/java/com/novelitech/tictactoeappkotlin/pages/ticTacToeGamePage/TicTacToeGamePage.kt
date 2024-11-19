@@ -7,12 +7,10 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -91,6 +89,7 @@ fun TicTacToeGamePage(modifier: Modifier = Modifier) {
         snackbarHost = {
             SnackbarHost(hostState = snackbarHostState)
         },
+        containerColor = Color.White,
         topBar = {
             Box(
                 modifier = Modifier
