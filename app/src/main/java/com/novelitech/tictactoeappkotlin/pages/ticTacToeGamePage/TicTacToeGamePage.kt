@@ -14,6 +14,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.novelitech.tictactoeappkotlin.core.validations.GameValidation
 import com.novelitech.tictactoeappkotlin.models.Player
 import com.novelitech.tictactoeappkotlin.models.Position
 import com.novelitech.tictactoeappkotlin.pages.ticTacToeGamePage.widgets.board.Board
@@ -28,16 +29,6 @@ import com.novelitech.tictactoeappkotlin.pages.ticTacToeGamePage.widgets.display
 
 @Composable
 fun TicTacToeGamePage(modifier: Modifier = Modifier) {
-
-//    var board by remember {
-//        mutableStateOf<List<List<Player?>>>(
-//            listOf(
-//                listOf<Player?>(null,null,null),
-//                listOf<Player?>(null,null,null),
-//                listOf<Player?>(null,null,null),
-//            )
-//        )
-//    }
 
     val board = remember {
         mutableStateListOf(
@@ -60,6 +51,14 @@ fun TicTacToeGamePage(modifier: Modifier = Modifier) {
 
     fun changeCurrentPlayer() {
         currentPlayer = if(currentPlayer == Player.X) Player.O else Player.X
+    }
+
+    fun cleanBoard() {
+        for (i in 0..<board.size) {
+            for (j in 0..<board.size) {
+                board[i][j] = null
+            }
+        }
     }
 
     Scaffold(
@@ -85,10 +84,22 @@ fun TicTacToeGamePage(modifier: Modifier = Modifier) {
                     if(board[position.x][position.y] == null) {
                         board[position.x][position.y] = currentPlayer
 
+                        if(GameValidation.isWinner(board, currentPlayer)) {
+                            currentScore[currentPlayer] = currentScore[currentPlayer]!! + 1
+
+                            // Present message about the winner and restart board after 2 seconds
+                            cleanBoard()
+                        } else if(GameValidation.isEveryBoxFulfilled(board)) {
+
+                            // It was a draw
+                            // Present message about the draw and restart board after 2 seconds
+                            cleanBoard()
+                        }
+
                         changeCurrentPlayer()
 
-                        println("Clicked position: x: ${position.x} | y: ${position.y}")
-                        println("Current board: $board")
+//                        println("Clicked position: x: ${position.x} | y: ${position.y}")
+//                        println("Current board: $board")
                     }
                 }
             )

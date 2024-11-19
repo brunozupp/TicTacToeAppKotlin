@@ -15,7 +15,7 @@ fun Display(
 ) {
     Box(modifier = modifier) {
         Column {
-            Text(text = "Current player: $currentPlayer.name")
+            Text(text = "Current player: ${currentPlayer.name}")
             Text(text = "Score: ${Player.X} = ${currentScore[Player.X]} | ${Player.O} = ${currentScore[Player.O]}")
         }
     }
