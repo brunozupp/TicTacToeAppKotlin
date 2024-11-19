@@ -133,6 +133,10 @@ fun TicTacToeGamePage(modifier: Modifier = Modifier) {
                 positionsWinner = positionsWinner,
                 onTap = { position: Position ->
 
+                    if(positionsWinner.isNotEmpty()) {
+                        return@Board
+                    }
+
                     if(board[position.x][position.y] == null) {
                         board[position.x][position.y] = currentPlayer
 
